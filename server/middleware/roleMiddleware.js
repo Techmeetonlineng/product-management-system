@@ -1,4 +1,8 @@
-function authorize(...roles) {
+// ======================================
+// Role Authorization Middleware
+// ======================================
+
+function authorize(...allowedRoles) {
 
     return (req, res, next) => {
 
@@ -13,12 +17,12 @@ function authorize(...roles) {
 
         }
 
-        if (!roles.includes(req.user.role_id)) {
+        if (!allowedRoles.includes(req.user.role_id)) {
 
             return res.status(403).json({
 
                 success: false,
-                message: "Access denied."
+                message: "You do not have permission to perform this action."
 
             });
 

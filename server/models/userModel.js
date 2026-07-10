@@ -61,6 +61,7 @@ async function findUserByEmail(email) {
             phone,
             password,
             account_status,
+            email_verified,
             created_at
         FROM users
         WHERE email = ?`,
@@ -91,7 +92,9 @@ async function findUserById(id) {
             last_name,
             email,
             phone,
-            account_status
+            account_status,
+            email_verified,
+            created_at
         FROM users
         WHERE user_id = ?`,
 
@@ -122,9 +125,36 @@ async function getAllUsers() {
             email,
             phone,
             account_status,
+            email_verified,
             created_at
         FROM users
         ORDER BY created_at DESC`
+
+    );
+
+    return rows;
+
+}
+
+// =====================================
+// Get Pending Vendors
+// =====================================
+async function getPendingVendors() {
+
+    const [rows] = await db.execute(
+
+        `SELECT
+            user_id,
+            first_name,
+            last_name,
+            email,
+            phone,
+            account_status,
+            created_at
+        FROM users
+        WHERE role_id = 2
+        AND account_status = 'Pending'
+        ORDER BY created_at ASC`
 
     );
 
@@ -154,12 +184,32 @@ async function updateAccountStatus(user_id, status) {
 
 }
 
+// =====================================
+// Delete User
+// =====================================
+async function deleteUser(user_id) {
+
+    const [result] = await db.execute(
+
+        `DELETE FROM users
+        WHERE user_id = ?`,
+
+        [user_id]
+
+    );
+
+    return result;
+
+}
+
 module.exports = {
 
     createUser,
     findUserByEmail,
     findUserById,
     getAllUsers,
-    updateAccountStatus
+    getPendingVendors,
+    updateAccountStatus,
+    deleteUser
 
 };
