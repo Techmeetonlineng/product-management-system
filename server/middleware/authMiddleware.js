@@ -1,9 +1,5 @@
 const jwt = require("jsonwebtoken");
 
-// ======================================
-// Authenticate User
-// ======================================
-
 function authenticate(req, res, next) {
 
     try {
@@ -15,7 +11,7 @@ function authenticate(req, res, next) {
             return res.status(401).json({
 
                 success: false,
-                message: "Access denied. No token provided."
+                message: "No token provided."
 
             });
 

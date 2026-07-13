@@ -14,6 +14,9 @@ const pool = require("./config/database");
 const authRoutes = require("./routes/authRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const productRoutes = require("./routes/productRoutes");
+const vendorRoutes = require("./routes/vendorRoutes");
+
+// ======================================
 
 const app = express();
 
@@ -37,20 +40,38 @@ app.use(cors());
 
 app.use(express.json());
 
-app.use(
-    express.urlencoded({
-        extended: true
-    })
-);
+app.use(express.urlencoded({
+    extended: true
+}));
 
 app.use(morgan("dev"));
 
 // ======================================
-// Static Folder
+// Static Files
 // ======================================
 
+// Entire client folder
 app.use(express.static(path.join(__dirname, "../client")));
 
+// Assets
+app.use(
+    "/assets",
+    express.static(path.join(__dirname, "../client/assets"))
+);
+
+// Pages
+app.use(
+    "/pages",
+    express.static(path.join(__dirname, "../client/pages"))
+);
+
+// Images
+app.use(
+    "/images",
+    express.static(path.join(__dirname, "../client/images"))
+);
+
+// Uploads
 app.use(
     "/uploads",
     express.static(path.join(__dirname, "uploads"))
@@ -61,23 +82,34 @@ app.use(
 // ======================================
 
 app.use("/api/auth", authRoutes);
+
 app.use("/api/categories", categoryRoutes);
+
 app.use("/api/products", productRoutes);
+
+app.use("/api/vendors", vendorRoutes);
 
 console.log("✓ Auth Routes Loaded");
 console.log("✓ Category Routes Loaded");
 console.log("✓ Product Routes Loaded");
+console.log("✓ Vendor Routes Loaded");
 
 // ======================================
-// Home Route
+// Pages
 // ======================================
 
+// Login Page
 app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "../client/login.html"));
+});
 
-    res.sendFile(
-        path.join(__dirname, "../client/index.html")
-    );
+// Dashboard Redirect
+app.get("/admin/dashboard.html", (req, res) => {
+    res.redirect("/pages/admin/dashboard.html");
+});
 
+app.get("/vendor/dashboard.html", (req, res) => {
+    res.redirect("/pages/vendor/dashboard.html");
 });
 
 // ======================================
@@ -91,11 +123,9 @@ app.get("/health", async (req, res) => {
         await pool.query("SELECT 1");
 
         res.json({
-
             success: true,
             message: "Server is running.",
             database: "Connected"
-
         });
 
     }
@@ -103,10 +133,8 @@ app.get("/health", async (req, res) => {
     catch (error) {
 
         res.status(500).json({
-
             success: false,
             message: "Database connection failed."
-
         });
 
     }
@@ -114,7 +142,7 @@ app.get("/health", async (req, res) => {
 });
 
 // ======================================
-// 404 Handler
+// 404
 // ======================================
 
 app.use((req, res) => {
@@ -146,7 +174,7 @@ app.use((err, req, res, next) => {
 });
 
 // ======================================
-// Test Database Connection
+// Database Test
 // ======================================
 
 (async () => {
@@ -160,9 +188,7 @@ app.use((err, req, res, next) => {
         console.log("=================================");
 
         const [rows] = await connection.query(
-
             "SELECT DATABASE() AS db"
-
         );
 
         console.log(rows);

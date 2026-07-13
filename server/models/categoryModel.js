@@ -1,36 +1,23 @@
-const pool = require("../config/database");
-
-// ======================================
-// Create Category
-// ======================================
-async function createCategory(categoryData) {
-
-    const { category_name, description } = categoryData;
-
-    const [result] = await pool.query(
-
-        `INSERT INTO categories
-        (category_name, description)
-        VALUES (?, ?)`,
-
-        [category_name, description]
-
-    );
-
-    return result;
-
-}
+const db = require("../config/database");
 
 // ======================================
 // Get All Categories
 // ======================================
+
 async function getAllCategories() {
 
-    const [rows] = await pool.query(
+    const [rows] = await db.execute(
 
-        `SELECT *
-         FROM categories
-         ORDER BY category_id DESC`
+        `
+        SELECT
+            category_id,
+            category_name,
+            description,
+            status,
+            created_at
+        FROM categories
+        ORDER BY category_name ASC
+        `
 
     );
 
@@ -41,37 +28,80 @@ async function getAllCategories() {
 // ======================================
 // Get Category By ID
 // ======================================
+
 async function getCategoryById(id) {
 
-    const [rows] = await pool.query(
+    const [rows] = await db.execute(
 
-        `SELECT *
-         FROM categories
-         WHERE category_id = ?`,
-
+        `
+        SELECT
+            category_id,
+            category_name,
+            description,
+            status,
+            created_at
+        FROM categories
+        WHERE category_id = ?
+        `,
         [id]
 
     );
 
-    return rows[0];
+    return rows.length ? rows[0] : null;
+
+}
+
+// ======================================
+// Create Category
+// ======================================
+
+async function createCategory(data) {
+
+    const [result] = await db.execute(
+
+        `
+        INSERT INTO categories
+        (
+            category_name,
+            description,
+            status
+        )
+        VALUES (?, ?, ?)
+        `,
+        [
+            data.category_name,
+            data.description,
+            data.status || "Active"
+        ]
+
+    );
+
+    return result;
 
 }
 
 // ======================================
 // Update Category
 // ======================================
-async function updateCategory(id, categoryData) {
 
-    const { category_name, description } = categoryData;
+async function updateCategory(id, data) {
 
-    const [result] = await pool.query(
+    const [result] = await db.execute(
 
-        `UPDATE categories
-         SET category_name = ?,
-             description = ?
-         WHERE category_id = ?`,
-
-        [category_name, description, id]
+        `
+        UPDATE categories
+        SET
+            category_name = ?,
+            description = ?,
+            status = ?
+        WHERE category_id = ?
+        `,
+        [
+            data.category_name,
+            data.description,
+            data.status,
+            id
+        ]
 
     );
 
@@ -82,13 +112,15 @@ async function updateCategory(id, categoryData) {
 // ======================================
 // Delete Category
 // ======================================
+
 async function deleteCategory(id) {
 
-    const [result] = await pool.query(
+    const [result] = await db.execute(
 
-        `DELETE FROM categories
-         WHERE category_id = ?`,
-
+        `
+        DELETE FROM categories
+        WHERE category_id = ?
+        `,
         [id]
 
     );
@@ -97,12 +129,34 @@ async function deleteCategory(id) {
 
 }
 
+// ======================================
+// Check Existing Category
+// ======================================
+
+async function findCategoryByName(name) {
+
+    const [rows] = await db.execute(
+
+        `
+        SELECT *
+        FROM categories
+        WHERE category_name = ?
+        `,
+        [name]
+
+    );
+
+    return rows.length ? rows[0] : null;
+
+}
+
 module.exports = {
 
-    createCategory,
     getAllCategories,
     getCategoryById,
+    createCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    findCategoryByName
 
 };

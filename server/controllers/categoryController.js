@@ -1,18 +1,105 @@
 const categoryModel = require("../models/categoryModel");
+const { validateCategory } = require("../validations/categoryValidation");
+
+// ======================================
+// Get All Categories
+// ======================================
+
+async function getAllCategories(req, res) {
+
+    try {
+
+        const categories = await categoryModel.getAllCategories();
+
+        return res.status(200).json({
+            success: true,
+            count: categories.length,
+            data: categories
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to retrieve categories."
+        });
+
+    }
+
+}
+
+// ======================================
+// Get Category By ID
+// ======================================
+
+async function getCategoryById(req, res) {
+
+    try {
+
+        const category = await categoryModel.getCategoryById(req.params.id);
+
+        if (!category) {
+
+            return res.status(404).json({
+                success: false,
+                message: "Category not found."
+            });
+
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: category
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to retrieve category."
+        });
+
+    }
+
+}
 
 // ======================================
 // Create Category
 // ======================================
+
 async function createCategory(req, res) {
 
     try {
 
-        const { category_name, description } = req.body;
+        const errors = validateCategory(req.body);
 
-        const result = await categoryModel.createCategory({
-            category_name,
-            description
-        });
+        if (errors.length > 0) {
+
+            return res.status(400).json({
+                success: false,
+                errors
+            });
+
+        }
+
+        const exists = await categoryModel.findCategoryByName(
+            req.body.category_name
+        );
+
+        if (exists) {
+
+            return res.status(409).json({
+                success: false,
+                message: "Category already exists."
+            });
+
+        }
+
+        const result = await categoryModel.createCategory(req.body);
 
         return res.status(201).json({
             success: true,
@@ -24,94 +111,9 @@ async function createCategory(req, res) {
 
         console.error(error);
 
-        if (error.code === "ER_DUP_ENTRY") {
-
-            return res.status(409).json({
-                success: false,
-                message: "Category already exists."
-            });
-
-        }
-
         return res.status(500).json({
             success: false,
-            message: "Internal Server Error"
-        });
-
-    }
-
-}
-// ======================================
-// Get All Categories
-// ======================================
-async function getAllCategories(req, res) {
-
-    try {
-
-        const categories = await categoryModel.getAllCategories();
-
-        res.json({
-
-            success: true,
-            data: categories
-
-        });
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-
-            success: false,
-            message: error.message
-
-        });
-
-    }
-
-}
-
-// ======================================
-// Get Category By ID
-// ======================================
-async function getCategoryById(req, res) {
-
-    try {
-
-        const category = await categoryModel.getCategoryById(req.params.id);
-
-        if (!category) {
-
-            return res.status(404).json({
-
-                success: false,
-                message: "Category not found."
-
-            });
-
-        }
-
-        res.json({
-
-            success: true,
-            data: category
-
-        });
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-
-            success: false,
-            message: error.message
-
+            message: "Unable to create category."
         });
 
     }
@@ -121,41 +123,48 @@ async function getCategoryById(req, res) {
 // ======================================
 // Update Category
 // ======================================
+
 async function updateCategory(req, res) {
 
     try {
 
-        const { category_name, description } = req.body;
+        const errors = validateCategory(req.body);
 
-        await categoryModel.updateCategory(
+        if (errors.length > 0) {
 
+            return res.status(400).json({
+                success: false,
+                errors
+            });
+
+        }
+
+        const result = await categoryModel.updateCategory(
             req.params.id,
-
-            {
-                category_name,
-                description
-            }
-
+            req.body
         );
 
-        res.json({
+        if (result.affectedRows === 0) {
 
+            return res.status(404).json({
+                success: false,
+                message: "Category not found."
+            });
+
+        }
+
+        return res.status(200).json({
             success: true,
             message: "Category updated successfully."
-
         });
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(error);
 
-        res.status(500).json({
-
+        return res.status(500).json({
             success: false,
-            message: error.message
-
+            message: "Unable to update category."
         });
 
     }
@@ -165,30 +174,34 @@ async function updateCategory(req, res) {
 // ======================================
 // Delete Category
 // ======================================
+
 async function deleteCategory(req, res) {
 
     try {
 
-        await categoryModel.deleteCategory(req.params.id);
+        const result = await categoryModel.deleteCategory(req.params.id);
 
-        res.json({
+        if (result.affectedRows === 0) {
 
+            return res.status(404).json({
+                success: false,
+                message: "Category not found."
+            });
+
+        }
+
+        return res.status(200).json({
             success: true,
             message: "Category deleted successfully."
-
         });
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(error);
 
-        res.status(500).json({
-
+        return res.status(500).json({
             success: false,
-            message: error.message
-
+            message: "Unable to delete category."
         });
 
     }
@@ -197,9 +210,9 @@ async function deleteCategory(req, res) {
 
 module.exports = {
 
-    createCategory,
     getAllCategories,
     getCategoryById,
+    createCategory,
     updateCategory,
     deleteCategory
 

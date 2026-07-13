@@ -1,81 +1,107 @@
 const bcrypt = require("bcrypt");
-const userModel = require("../models/userModel");
-const { validateRegister } = require("../validations/authValidation");
-const { generateToken } = require("../utils/jwt");
+const jwt = require("jsonwebtoken");
+const authModel = require("../models/authModel");
 
 // ======================================
-// Register
+// REGISTER
 // ======================================
 
 async function register(req, res) {
 
     try {
 
-        const errors = validateRegister(req.body);
+        const {
+            first_name,
+            last_name,
+            email,
+            phone,
+            password,
+            role
+        } = req.body;
 
-        if (errors.length > 0) {
-
-            return res.status(400).json({
-                success: false,
-                errors
-            });
-
-        }
-
-        const existingUser = await userModel.findUserByEmail(req.body.email);
+        // Check existing email
+        const existingUser = await authModel.findByEmail(email);
 
         if (existingUser) {
 
-            return res.status(409).json({
+            return res.status(400).json({
+
                 success: false,
                 message: "Email already exists."
+
             });
 
         }
 
-        let role_id = 3;
-        let account_status = "Approved";
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Vendor Registration
-        if (req.body.role === "Vendor") {
+        const role_id = role === "Vendor" ? 2 : 3;
 
-            role_id = 2;
-            account_status = "Pending";
+        const account_status =
+            role_id === 2 ? "Pending" : "Approved";
+
+        const result = await authModel.createUser({
+
+            role_id,
+            first_name,
+            last_name,
+            email,
+            phone,
+            password: hashedPassword,
+            account_status
+
+        });
+
+        // CUSTOMER
+        if (role_id === 3) {
+
+            const token = jwt.sign({
+
+                user_id: result.insertId,
+                role_id
+
+            },
+                process.env.JWT_SECRET,
+                {
+                    expiresIn: process.env.JWT_EXPIRES_IN
+                }
+            );
+
+            return res.status(201).json({
+
+                success: true,
+
+                message: "Registration successful.",
+
+                token,
+
+                user: {
+
+                    user_id: result.insertId,
+
+                    role_id,
+
+                    first_name,
+
+                    last_name,
+
+                    email,
+
+                    account_status
+
+                }
+
+            });
 
         }
 
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
-        const userData = {
-
-            role_id,
-
-            first_name: req.body.first_name,
-
-            last_name: req.body.last_name,
-
-            email: req.body.email,
-
-            phone: req.body.phone,
-
-            password: hashedPassword,
-
-            account_status
-
-        };
-
-        const result = await userModel.createUser(userData);
-
+        // VENDOR
         return res.status(201).json({
 
             success: true,
 
             message:
-                role_id === 2
-                    ? "Vendor registration successful. Await administrator approval."
-                    : "Customer registration successful.",
-
-            user_id: result.insertId
+                "Registration successful. Please wait for Administrator approval."
 
         });
 
@@ -89,9 +115,7 @@ async function register(req, res) {
 
             success: false,
 
-            message: "Internal Server Error",
-
-            error: error.message
+            message: "Unable to register."
 
         });
 
@@ -100,184 +124,125 @@ async function register(req, res) {
 }
 
 // ======================================
-// Login
+// LOGIN
 // ======================================
 
 async function login(req, res) {
 
     try {
 
-        const {
+        const { email, password } = req.body;
 
-            email,
-            password
-
-        } = req.body;
-
-        if (!email || !password) {
-
-            return res.status(400).json({
-
-                success: false,
-
-                message: "Email and password are required."
-
-            });
-
-        }
-
-        const user = await userModel.findUserByEmail(email);
+        const user = await authModel.findByEmail(email);
 
         if (!user) {
-
             return res.status(401).json({
-
                 success: false,
-
                 message: "Invalid email or password."
-
             });
-
         }
 
-        if (user.account_status !== "Approved") {
+        const valid = await bcrypt.compare(password, user.password);
 
-            return res.status(403).json({
-
+        if (!valid) {
+            return res.status(401).json({
                 success: false,
-
-                message: "Your account has not yet been approved."
-
+                message: "Invalid email or password."
             });
-
         }
 
-        const match = await bcrypt.compare(
+        // Vendor must be approved
+        if (
+            user.role_id === 2 &&
+            user.account_status !== "Approved"
+        ) {
+            return res.status(403).json({
+                success: false,
+                message: "Your vendor account is awaiting Administrator approval."
+            });
+        }
 
-            password,
-
-            user.password
-
+        // Generate JWT
+        const token = jwt.sign(
+            {
+                user_id: user.user_id,
+                role_id: user.role_id
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: process.env.JWT_EXPIRES_IN
+            }
         );
 
-        if (!match) {
-
-            return res.status(401).json({
-
-                success: false,
-
-                message: "Invalid email or password."
-
-            });
-
-        }
-
-        const token = generateToken(user);
-
         return res.status(200).json({
-
             success: true,
-
             message: "Login successful.",
-
             token,
-
             user: {
-
                 user_id: user.user_id,
-
                 role_id: user.role_id,
-
                 first_name: user.first_name,
-
                 last_name: user.last_name,
-
                 email: user.email,
-
                 phone: user.phone,
-
-                account_status: user.account_status,
-
-                email_verified: user.email_verified
-
+                account_status: user.account_status
             }
-
         });
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(error);
 
         return res.status(500).json({
-
             success: false,
-
-            message: "Internal Server Error",
-
-            error: error.message
-
+            message: "Unable to login."
         });
 
     }
 
-}
-
-// ======================================
-// Get Current User
+}/// ======================================
+// CURRENT USER
 // ======================================
 
 async function me(req, res) {
 
     try {
 
-        const user = await userModel.findUserById(req.user.user_id);
+        const user = await authModel.findById(req.user.user_id);
 
         if (!user) {
 
             return res.status(404).json({
-
                 success: false,
-
                 message: "User not found."
-
             });
 
         }
 
         return res.json({
-
             success: true,
-
             data: user
-
         });
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(error);
 
         return res.status(500).json({
-
             success: false,
-
-            message: error.message
-
+            message: "Unable to fetch user."
         });
 
     }
 
 }
 
+
+
 module.exports = {
 
     register,
+    login, 
+    me, 
 
-    login,
-
-    me
-
-};
+}

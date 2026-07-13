@@ -35,51 +35,53 @@ VALUES
 
 INSERT INTO users
 (
-user_id,
-role_id,
-first_name,
-last_name,
-email,
-phone,
-password,
-account_status,
-email_verified
+    user_id,
+    role_id,
+    first_name,
+    last_name,
+    email,
+    phone,
+    password,
+    account_status,
+    email_verified
 )
 VALUES
-(
-1,
-1,
-'System',
-'Administrator',
-'admin@pms.com',
-'08000000000',
-'$2b$10$0dK6QqNfGxj5pYkqY5L6CeP7I4mR6l2P8Q8v0XQ2Jf2mA4mD9kP7a',
-'Approved',
-TRUE
-),
-(
-2,
-2,
-'John',
-'Vendor',
-'vendor@pms.com',
-'08011111111',
-'$2b$10$0dK6QqNfGxj5pYkqY5L6CeP7I4mR6l2P8Q8v0XQ2Jf2mA4mD9kP7a',
-'Approved',
-TRUE
-),
-(
-3,
-3,
-'James',
-'Customer',
-'customer@pms.com',
-'08022222222',
-'$2b$10$0dK6QqNfGxj5pYkqY5L6CeP7I4mR6l2P8Q8v0XQ2Jf2mA4mD9kP7a',
-'Approved',
-TRUE
-);
 
+(
+    1,
+    1,
+    'System',
+    'Administrator',
+    'admin@pms.com',
+    '08000000000',
+    '$2b$10$a2n4Nz/el.0z4/jO7t/Oo.VCQ5yhQM.WUz1gavWjEuAXhJjcNJMsm',
+    'Approved',
+    TRUE
+),
+
+(
+    2,
+    2,
+    'John',
+    'Vendor',
+    'vendor@pms.com',
+    '08011111111',
+    '$2b$10$NNWKFAGZyH/rKMYoYa2iheZrxk0hSvFvjrQHJNPclGnPgoqAizhOe',
+    'Approved',
+    TRUE
+),
+
+(
+    3,
+    3,
+    'James',
+    'Customer',
+    'customer@pms.com',
+    '08022222222',
+    '$2b$10$T9i5SkuvzxubNBXeHITmH.00q4CzGolrTFI2Gsyda2iPjIY6J.Tay',
+    'Approved',
+    TRUE
+);
 ALTER TABLE roles AUTO_INCREMENT=4;
 ALTER TABLE users AUTO_INCREMENT=4;
 

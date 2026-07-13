@@ -4,19 +4,54 @@ const router = express.Router();
 
 const categoryController = require("../controllers/categoryController");
 
-// Create
-router.post("/", categoryController.createCategory);
+const authenticate = require("../middleware/authMiddleware");
+const authorize = require("../middleware/roleMiddleware");
 
-// Read All
-router.get("/", categoryController.getAllCategories);
+// ======================================
+// Authentication
+// ======================================
 
-// Read One
-router.get("/:id", categoryController.getCategoryById);
+router.use(authenticate);
 
-// Update
-router.put("/:id", categoryController.updateCategory);
+// ======================================
+// Everyone Logged In
+// ======================================
 
-// Delete
-router.delete("/:id", categoryController.deleteCategory);
+// Get All Categories
+router.get(
+    "/",
+    categoryController.getAllCategories
+);
+
+// Get Category By ID
+router.get(
+    "/:id",
+    categoryController.getCategoryById
+);
+
+// ======================================
+// Administrator Only
+// ======================================
+
+// Create Category
+router.post(
+    "/",
+    authorize(1),
+    categoryController.createCategory
+);
+
+// Update Category
+router.put(
+    "/:id",
+    authorize(1),
+    categoryController.updateCategory
+);
+
+// Delete Category
+router.delete(
+    "/:id",
+    authorize(1),
+    categoryController.deleteCategory
+);
 
 module.exports = router;
