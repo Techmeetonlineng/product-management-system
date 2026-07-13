@@ -8,9 +8,13 @@ const user = getCurrentUser();
 let inventoryProducts = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-    loadInventory();
-    document.getElementById("refreshInventory")?.addEventListener("click", loadInventory);
-    document.getElementById("searchInventory")?.addEventListener("keyup", searchInventory);
+  loadInventory();
+  document
+    .getElementById("refreshInventory")
+    ?.addEventListener("click", loadInventory);
+  document
+    .getElementById("searchInventory")
+    ?.addEventListener("keyup", searchInventory);
 });
 
 // ======================================
@@ -18,20 +22,20 @@ document.addEventListener("DOMContentLoaded", () => {
 // ======================================
 
 async function loadInventory() {
-    try {
-        const result = await API.get(CONFIG.API.ENDPOINTS.PRODUCTS.LIST);
+  try {
+    const result = await API.get(CONFIG.API.ENDPOINTS.PRODUCTS.LIST);
 
-        if (!result.success) {
-            showError("Error", result.message);
-            return;
-        }
-
-        inventoryProducts = result.data.filter(p => p.vendor_id === user.user_id);
-        renderInventory(inventoryProducts);
-    } catch (error) {
-        console.error(error);
-        showError("Error", "Unable to load inventory.");
+    if (!result.success) {
+      showError("Error", result.message);
+      return;
     }
+
+    inventoryProducts = result.data.filter((p) => p.vendor_id === user.user_id);
+    renderInventory(inventoryProducts);
+  } catch (error) {
+    console.error(error);
+    showError("Error", "Unable to load inventory.");
+  }
 }
 
 // ======================================
@@ -39,21 +43,32 @@ async function loadInventory() {
 // ======================================
 
 function renderInventory(data) {
-    const table = document.getElementById("inventoryTable");
-    if (!table) return;
+  const table = document.getElementById("inventoryTable");
+  if (!table) return;
 
-    table.innerHTML = "";
+  table.innerHTML = "";
 
-    if (data.length === 0) {
-        table.innerHTML = '<tr><td colspan="6" class="text-center">No products in inventory.</td></tr>';
-        return;
-    }
+  if (data.length === 0) {
+    table.innerHTML =
+      '<tr><td colspan="6" class="text-center">No products in inventory.</td></tr>';
+    return;
+  }
 
-    data.forEach(product => {
-        const stockStatus = product.quantity > 10 ? 'success' : product.quantity > 0 ? 'warning' : 'danger';
-        const stockText = product.quantity > 10 ? 'In Stock' : product.quantity > 0 ? 'Low Stock' : 'Out of Stock';
+  data.forEach((product) => {
+    const stockStatus =
+      product.quantity > 10
+        ? "success"
+        : product.quantity > 0
+          ? "warning"
+          : "danger";
+    const stockText =
+      product.quantity > 10
+        ? "In Stock"
+        : product.quantity > 0
+          ? "Low Stock"
+          : "Out of Stock";
 
-        table.innerHTML += `
+    table.innerHTML += `
         <tr>
             <td>${product.product_id}</td>
             <td>${product.product_name}</td>
@@ -71,7 +86,7 @@ function renderInventory(data) {
             </td>
         </tr>
         `;
-    });
+  });
 }
 
 // ======================================
@@ -79,25 +94,18 @@ function renderInventory(data) {
 // ======================================
 
 function searchInventory() {
-    const keyword = document.getElementById("searchInventory")?.value.toLowerCase() || "";
-    const filtered = inventoryProducts.filter(p =>
-        p.product_name.toLowerCase().includes(keyword)
-    );
+  const keyword =
+    document.getElementById("searchInventory")?.value.toLowerCase() || "";
+  const filtered = inventoryProducts.filter((p) =>
+    p.product_name.toLowerCase().includes(keyword),
+  );
+  try {
     renderInventory(filtered);
-}
+  } catch (error) {
+    console.error(error);
 
-    catch (error) {
-
-        console.error(error);
-
-        Swal.fire(
-            "Error",
-            "Unable to load inventory.",
-            "error"
-        );
-
-    }
-
+    Swal.fire("Error", "Unable to load inventory.", "error");
+  }
 }
 
 // ======================================
@@ -105,14 +113,12 @@ function searchInventory() {
 // ======================================
 
 function renderInventory(products) {
+  const table = document.getElementById("inventoryTable");
 
-    const table = document.getElementById("inventoryTable");
+  table.innerHTML = "";
 
-    table.innerHTML = "";
-
-    if (products.length === 0) {
-
-        table.innerHTML = `
+  if (products.length === 0) {
+    table.innerHTML = `
 
         <tr>
 
@@ -126,17 +132,15 @@ function renderInventory(products) {
 
         `;
 
-        return;
+    return;
+  }
 
-    }
+  products.forEach((product) => {
+    const image = product.image
+      ? `http://localhost:5000/uploads/${product.image}`
+      : "../../assets/images/no-image.png";
 
-    products.forEach(product => {
-
-        const image = product.image
-            ? `http://localhost:5000/uploads/${product.image}`
-            : "../../assets/images/no-image.png";
-
-        table.innerHTML += `
+    table.innerHTML += `
 
         <tr>
 
@@ -173,7 +177,5 @@ function renderInventory(products) {
         </tr>
 
         `;
-
-    });
-
+  });
 }
