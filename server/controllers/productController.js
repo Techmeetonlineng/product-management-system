@@ -5,128 +5,112 @@ const productModel = require("../models/productModel");
 // =====================================
 
 async function createProduct(req, res) {
+  try {
+    // Vendor comes from authentication
+    req.body.vendor_id = req.user.user_id;
 
-    try {
-
-        // Vendor comes from authentication
-        req.body.vendor_id = req.user.user_id;
-
-        // Save uploaded image filename
-        if (req.file) {
-
-            req.body.image = req.file.filename;
-
-        }
-
-        const result = await productModel.createProduct(req.body);
-
-        return res.status(201).json({
-
-            success: true,
-            message: "Product created successfully.",
-            product_id: result.insertId
-
-        });
-
+    // Save uploaded image filename
+    if (req.file) {
+      req.body.image = req.file.filename;
     }
 
-    catch (error) {
+    const result = await productModel.createProduct(req.body);
 
-        console.error(error);
+    return res.status(201).json({
+      success: true,
+      message: "Product created successfully.",
+      product_id: result.insertId,
+    });
+  } catch (error) {
+    console.error(error);
 
-        return res.status(500).json({
+    return res.status(500).json({
+      success: false,
+      message: "Unable to create product.",
+    });
+  }
+}
 
-            success: false,
-            message: "Unable to create product."
+// =====================================
+// Get Public Products
+// =====================================
 
-        });
+async function getPublicProducts(req, res) {
+  try {
+    const products = await productModel.getPublicProducts();
 
-    }
+    return res.json({
+      success: true,
 
+      count: products.length,
+
+      data: products,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+
+      message: "Unable to retrieve public products.",
+    });
+  }
 }
 
 // =====================================
 // Get All Products
 // =====================================
 
-async function getAllProducts(req,res){
+async function getAllProducts(req, res) {
+  try {
+    const role = req.user.role_id;
 
-    try{
+    const products = await productModel.getAllProducts(role);
 
-        const role=req.user.role_id;
+    return res.json({
+      success: true,
 
-        const products=await productModel.getAllProducts(role);
+      count: products.length,
 
-        return res.json({
+      data: products,
+    });
+  } catch (error) {
+    console.error(error);
 
-            success:true,
+    return res.status(500).json({
+      success: false,
 
-            count:products.length,
-
-            data:products
-
-        });
-
-    }
-
-    catch(error){
-
-        console.error(error);
-
-        return res.status(500).json({
-
-            success:false,
-
-            message:"Unable to retrieve products."
-
-        });
-
-    }
-
+      message: "Unable to retrieve products.",
+    });
+  }
 }
 // =====================================
 // Get Product By ID
 // =====================================
 
 async function getProductById(req, res) {
+  try {
+    const product = await productModel.getProductById(req.params.id);
 
-    try {
-
-        const product = await productModel.getProductById(req.params.id);
-
-        if (!product) {
-
-            return res.status(404).json({
-
-                success: false,
-                message: "Product not found."
-
-            });
-
-        }
-
-        return res.status(200).json({
-
-            success: true,
-            data: product
-
-        });
-
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found.",
+      });
     }
 
-    catch (error) {
+    return res.status(200).json({
+      success: true,
+      data: product,
+    });
+  } catch (error) {
+    console.error(error);
 
-        console.error(error);
-
-        return res.status(500).json({
-
-            success: false,
-            message: "Unable to retrieve product."
-
-        });
-
-    }
-
+    return res.status(500).json({
+      success: false,
+      message: "Unable to retrieve product.",
+    });
+  }
 }
 
 // =====================================
@@ -134,233 +118,157 @@ async function getProductById(req, res) {
 // =====================================
 
 async function updateProduct(req, res) {
-
-    try {
-
-        // If a new image is uploaded
-        if (req.file) {
-
-            req.body.image = req.file.filename;
-
-        }
-
-        const result = await productModel.updateProduct(
-
-            req.params.id,
-            req.body
-
-        );
-
-        if (result.affectedRows === 0) {
-
-            return res.status(404).json({
-
-                success: false,
-                message: "Product not found."
-
-            });
-
-        }
-
-        return res.status(200).json({
-
-            success: true,
-            message: "Product updated successfully."
-
-        });
-
+  try {
+    // If a new image is uploaded
+    if (req.file) {
+      req.body.image = req.file.filename;
     }
 
-    catch (error) {
+    const result = await productModel.updateProduct(req.params.id, req.body);
 
-        console.error(error);
-
-        return res.status(500).json({
-
-            success: false,
-            message: "Unable to update product."
-
-        });
-
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found.",
+      });
     }
 
+    return res.status(200).json({
+      success: true,
+      message: "Product updated successfully.",
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to update product.",
+    });
+  }
 }
 
 // =====================================
 // Approve Product
 // =====================================
 
-async function approveProduct(req,res){
+async function approveProduct(req, res) {
+  try {
+    const product = await productModel.getProductById(req.params.id);
 
-    try{
+    if (!product) {
+      return res.status(404).json({
+        success: false,
 
-        const product=await productModel.getProductById(req.params.id);
-
-        if(!product){
-
-            return res.status(404).json({
-
-                success:false,
-
-                message:"Product not found."
-
-            });
-
-        }
-
-        await productModel.approveProduct(req.params.id);
-
-        const authModel=require("../models/authModel");
-
-        await authModel.createNotification(
-
-            product.vendor_id,
-
-            "Product Approved",
-
-            `${product.product_name} has been approved and is now visible on OnCampus Marketplace.`
-
-        );
-
-        return res.json({
-
-            success:true,
-
-            message:"Product approved successfully."
-
-        });
-
+        message: "Product not found.",
+      });
     }
 
-    catch(error){
+    await productModel.approveProduct(req.params.id);
 
-        console.error(error);
+    const authModel = require("../models/authModel");
 
-        return res.status(500).json({
+    await authModel.createNotification(
+      product.vendor_id,
 
-            success:false,
+      "Product Approved",
 
-            message:"Unable to approve product."
+      `${product.product_name} has been approved and is now visible on OnCampus Marketplace.`,
+    );
 
-        });
+    return res.json({
+      success: true,
 
-    }
+      message: "Product approved successfully.",
+    });
+  } catch (error) {
+    console.error(error);
 
+    return res.status(500).json({
+      success: false,
+
+      message: "Unable to approve product.",
+    });
+  }
 }
 // =====================================
 // Reject Product
 // =====================================
 
-async function rejectProduct(req,res){
+async function rejectProduct(req, res) {
+  try {
+    const product = await productModel.getProductById(req.params.id);
 
-    try{
+    if (!product) {
+      return res.status(404).json({
+        success: false,
 
-        const product=await productModel.getProductById(req.params.id);
-
-        if(!product){
-
-            return res.status(404).json({
-
-                success:false,
-
-                message:"Product not found."
-
-            });
-
-        }
-
-        await productModel.rejectProduct(req.params.id);
-
-        const authModel=require("../models/authModel");
-
-        await authModel.createNotification(
-
-            product.vendor_id,
-
-            "Product Rejected",
-
-            `${product.product_name} was rejected by the Administrator.`
-
-        );
-
-        return res.json({
-
-            success:true,
-
-            message:"Product rejected successfully."
-
-        });
-
+        message: "Product not found.",
+      });
     }
 
-    catch(error){
+    await productModel.rejectProduct(req.params.id);
 
-        console.error(error);
+    const authModel = require("../models/authModel");
 
-        return res.status(500).json({
+    await authModel.createNotification(
+      product.vendor_id,
 
-            success:false,
+      "Product Rejected",
 
-            message:"Unable to reject product."
+      `${product.product_name} was rejected by the Administrator.`,
+    );
 
-        });
+    return res.json({
+      success: true,
 
-    }
+      message: "Product rejected successfully.",
+    });
+  } catch (error) {
+    console.error(error);
 
+    return res.status(500).json({
+      success: false,
+
+      message: "Unable to reject product.",
+    });
+  }
 }
 // =====================================
 // Delete Product
 // =====================================
 
 async function deleteProduct(req, res) {
+  try {
+    const result = await productModel.deleteProduct(req.params.id);
 
-    try {
-
-        const result = await productModel.deleteProduct(req.params.id);
-
-        if (result.affectedRows === 0) {
-
-            return res.status(404).json({
-
-                success: false,
-                message: "Product not found."
-
-            });
-
-        }
-
-        return res.status(200).json({
-
-            success: true,
-            message: "Product deleted successfully."
-
-        });
-
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found.",
+      });
     }
 
-    catch (error) {
+    return res.status(200).json({
+      success: true,
+      message: "Product deleted successfully.",
+    });
+  } catch (error) {
+    console.error(error);
 
-        console.error(error);
-
-        return res.status(500).json({
-
-            success: false,
-            message: "Unable to delete product."
-
-        });
-
-    }
-
+    return res.status(500).json({
+      success: false,
+      message: "Unable to delete product.",
+    });
+  }
 }
 
 module.exports = {
-
-    createProduct,
-    getAllProducts,
-    getProductById,
-    updateProduct,
-    approveProduct,
-    rejectProduct,
-    deleteProduct
-
+  createProduct,
+  getPublicProducts,
+  getAllProducts,
+  getProductById,
+  updateProduct,
+  approveProduct,
+  rejectProduct,
+  deleteProduct,
 };

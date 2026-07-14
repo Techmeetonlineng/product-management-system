@@ -77,12 +77,15 @@ function populateCategoryFilter() {
 
 async function loadProducts() {
   try {
-    const response = await fetch(`${CONFIG.API.BASE_URL}/products`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${CONFIG.API.BASE_URL}${CONFIG.API.ENDPOINTS.PRODUCTS.PUBLIC}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
-    });
+    );
 
     if (!response.ok) {
       showNoProducts();
@@ -92,8 +95,7 @@ async function loadProducts() {
     const result = await response.json();
 
     if (result.success && result.data) {
-      // Only show approved products
-      allProducts = result.data.filter((p) => p.approval_status === "Approved");
+      allProducts = result.data;
       renderProducts(allProducts);
     } else {
       showNoProducts();
