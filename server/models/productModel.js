@@ -251,6 +251,7 @@ async function deleteProduct(id) {
 module.exports = {
   createProduct,
   getAllProducts,
+  getPublicProducts,
   getProductById,
   updateProduct,
   approveProduct,
