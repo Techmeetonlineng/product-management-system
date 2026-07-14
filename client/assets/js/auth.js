@@ -128,7 +128,14 @@ async function forgotPassword(e) {
       return;
     }
 
-    showSuccess("Check your inbox", result.message);
+    showSuccess(
+      "Email Sent",
+      "If that email exists in our system, you will receive a password reset link shortly.",
+    ).then(() => {
+      setTimeout(() => {
+        window.location.href = "/login.html";
+      }, 2000);
+    });
   } catch (error) {
     console.error(error);
     showError("Error", "Unable to process password reset.");
