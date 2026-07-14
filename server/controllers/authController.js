@@ -142,8 +142,10 @@ async function login(req, res) {
             });
         }
 
-        const valid = await bcrypt.compare(password, user.password);
-
+        // Trim stored hash to avoid hidden/trailing whitespace causing compare to fail
+        const storedHash = (user.password || "").trim();
+        const valid = await bcrypt.compare(password, storedHash);
+        
         if (!valid) {
             return res.status(401).json({
                 success: false,

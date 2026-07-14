@@ -1,98 +1,153 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Product Management System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
-<body>
-
-<nav class="navbar navbar-expand-lg landing-nav">
-    <div class="container">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg landing-nav">
+      <div class="container">
         <a class="navbar-brand" href="#">PMS</a>
-        <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-label="Toggle navigation">
-            <i class="fas fa-bars"></i>
+        <button
+          class="navbar-toggler border-0 text-white"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navMenu"
+          aria-label="Toggle navigation"
+        >
+          <i class="fas fa-bars"></i>
         </button>
         <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav ms-auto gap-2">
-                <li class="nav-item">
-                    <a class="nav-link" href="login.html">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="btn btn-light btn-sm px-3" href="register.html">Get Started</a>
-                </li>
-            </ul>
+          <ul class="navbar-nav ms-auto gap-2">
+            <li class="nav-item">
+              <a class="nav-link" href="login.html">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-light btn-sm px-3" href="register.html"
+                >Get Started</a
+              >
+            </li>
+          </ul>
         </div>
-    </div>
-</nav>
+      </div>
+    </nav>
 
-<section class="hero container">
-    <div class="hero-badge">
-        <i class="fas fa-store"></i> Electronic Marketplace Platform
-    </div>
-    <h1>Product Management System</h1>
-    <p class="lead">
-        A comprehensive platform for managing products, vendors, and categories
-        in an electronic marketplace.
-    </p>
-    <div class="hero-actions">
-        <a href="login.html" class="btn btn-hero-primary">Sign In</a>
-        <a href="register.html" class="btn btn-hero-outline">Create Account</a>
-    </div>
-</section>
-
-<section class="info-section">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="info-card">
-                    <div class="icon"><i class="fas fa-shield-halved"></i></div>
-                    <h5>Admin Control</h5>
-                    <p>Manage categories, products, vendors, and approvals from a centralized dashboard.</p>
-                </div>
+    <!-- Search & Filter Bar -->
+    <section class="search-filter-section py-4 border-bottom">
+      <div class="container">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="input-group">
+              <span class="input-group-text bg-white border-end-0">
+                <i class="fas fa-search"></i>
+              </span>
+              <input
+                type="text"
+                id="productSearch"
+                class="form-control border-start-0"
+                placeholder="Search products..."
+              />
             </div>
-            <div class="col-md-4">
-                <div class="info-card">
-                    <div class="icon"><i class="fas fa-store"></i></div>
-                    <h5>Vendor Portal</h5>
-                    <p>Vendors can list products, track inventory, and manage their store profile.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="info-card">
-                    <div class="icon"><i class="fas fa-cart-shopping"></i></div>
-                    <h5>Customer Access</h5>
-                    <p>Customers can browse approved products from verified vendors.</p>
-                </div>
-            </div>
+          </div>
+          <div class="col-md-3">
+            <select id="categoryFilter" class="form-select">
+              <option value="">All Categories</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <select id="sortFilter" class="form-select">
+              <option value="newest">Newest First</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="popular">Most Popular</option>
+            </select>
+          </div>
         </div>
-    </div>
-</section>
+      </div>
+    </section>
 
-<section class="status-section">
-    <div class="container">
+    <!-- Product Listing Section -->
+    <section class="products-section py-5">
+      <div class="container">
+        <h3 class="mb-4">Available Products</h3>
+        <div id="productsContainer" class="row g-4">
+          <div class="col-12 text-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+        <div
+          id="noProducts"
+          class="alert alert-info text-center"
+          style="display: none"
+        >
+          No products found. Try adjusting your filters.
+        </div>
+      </div>
+    </section>
+
+    <section class="info-section">
+      <div class="container">
+        <div class="row justify-content-center g-5">
+          <div class="col-md-3">
+            <div class="info-card">
+              <div class="icon"><i class="fas fa-shield-halved"></i></div>
+              <h5>Admin Control</h5>
+              <p>
+                Manage categories, products, vendors, and approvals from a
+                centralized dashboard.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="info-card">
+              <div class="icon"><i class="fas fa-store"></i></div>
+              <h5>Vendor Portal</h5>
+              <p>
+                Vendors can list products, track inventory, and manage their
+                store profile.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="info-card">
+              <div class="icon"><i class="fas fa-cart-shopping"></i></div>
+              <h5>Customer Access</h5>
+              <p>
+                Customers can browse approved products from verified vendors.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="status-section">
+      <div class="container">
         <h5 class="mb-3">System Status</h5>
         <div id="statusBadge" class="status-badge checking">
-            <span class="status-dot"></span> Checking...
+          <span class="status-dot"></span> Checking...
         </div>
-    </div>
-</section>
+      </div>
+    </section>
 
-<section class="university-info container">
-    <h5>Ladoke Akintola University of Technology</h5>
-    <p class="mt-2">Faculty of Computing and Informatics</p>
-    <p>Department of Information Systems Science</p>
-</section>
+    <footer class="landing-footer">
+      &copy; 2026 Product Management System
+    </footer>
 
-<footer class="landing-footer">
-    &copy; 2026 Product Management System
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-<script src="assets/js/config.js"></script>
-<script src="assets/js/app.js"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/index-products.js"></script>
+    <script src="assets/js/app.js"></script>
+  </body>
 </html>
