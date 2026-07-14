@@ -194,7 +194,7 @@ function createProductCard(product) {
 
   const imageUrl = product.image_url
     ? `${CONFIG.API.BASE_URL.replace("/api", "")}${product.image_url}`
-    : "assets/images/placeholder.png";
+    : "assets/images/logo.png";
 
   const price = parseFloat(product.price).toLocaleString("en-US", {
     style: "currency",
