@@ -9,6 +9,12 @@ const authorize = require("../middleware/roleMiddleware");
 const upload = require("../middleware/uploadMiddleware");
 
 // ======================================
+// Public Routes
+// ======================================
+
+router.get("/public", productController.getPublicProducts);
+
+// ======================================
 // Authentication
 // ======================================
 
@@ -19,16 +25,10 @@ router.use(authenticate);
 // ======================================
 
 // Get Products
-router.get(
-    "/",
-    productController.getAllProducts
-);
+router.get("/", productController.getAllProducts);
 
 // Get Single Product
-router.get(
-    "/:id",
-    productController.getProductById
-);
+router.get("/:id", productController.getProductById);
 
 // ======================================
 // Vendor Only
@@ -36,18 +36,18 @@ router.get(
 
 // Create Product
 router.post(
-    "/",
-    authorize(2),
-    upload.single("image"),
-    productController.createProduct
+  "/",
+  authorize(2),
+  upload.single("image"),
+  productController.createProduct,
 );
 
 // Update Product
 router.put(
-    "/:id",
-    authorize(2),
-    upload.single("image"),
-    productController.updateProduct
+  "/:id",
+  authorize(2),
+  upload.single("image"),
+  productController.updateProduct,
 );
 
 // ======================================
@@ -55,24 +55,12 @@ router.put(
 // ======================================
 
 // Approve Product
-router.put(
-    "/:id/approve",
-    authorize(1),
-    productController.approveProduct
-);
+router.put("/:id/approve", authorize(1), productController.approveProduct);
 
 // Reject Product
-router.put(
-    "/:id/reject",
-    authorize(1),
-    productController.rejectProduct
-);
+router.put("/:id/reject", authorize(1), productController.rejectProduct);
 
 // Delete Product
-router.delete(
-    "/:id",
-    authorize(1),
-    productController.deleteProduct
-);
+router.delete("/:id", authorize(1), productController.deleteProduct);
 
 module.exports = router;

@@ -5,8 +5,7 @@ const pool = require("../config/database");
 // ==========================================
 
 async function createProduct(product) {
-
-    const sql = `
+  const sql = `
         INSERT INTO products
         (
             vendor_id,
@@ -23,23 +22,20 @@ async function createProduct(product) {
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    const [result] = await pool.query(sql, [
+  const [result] = await pool.query(sql, [
+    product.vendor_id,
+    product.category_id,
+    product.product_name,
+    product.description || "",
+    product.sku || "",
+    product.price,
+    product.quantity,
+    product.image || null,
+    "Pending",
+    product.product_status || "Available",
+  ]);
 
-        product.vendor_id,
-        product.category_id,
-        product.product_name,
-        product.description || "",
-        product.sku || "",
-        product.price,
-        product.quantity,
-        product.image || null,
-        "Pending",
-        product.product_status || "Available"
-
-    ]);
-
-    return result;
-
+  return result;
 }
 
 // ==========================================
@@ -51,8 +47,7 @@ async function createProduct(product) {
 // ==========================================
 
 async function getAllProducts(role_id = 0) {
-
-    let sql = `
+  let sql = `
         SELECT
             p.*,
             c.category_name,
@@ -65,24 +60,46 @@ async function getAllProducts(role_id = 0) {
             ON p.vendor_id=u.user_id
     `;
 
-    // Customer
-    if (role_id === 3) {
-
-        sql += `
+  // Customer
+  if (role_id === 3) {
+    sql += `
             WHERE
                 p.approval_status='Approved'
             AND
                 p.product_status='Available'
         `;
+  }
 
-    }
+  sql += ` ORDER BY p.product_id DESC`;
 
-    sql += ` ORDER BY p.product_id DESC`;
+  const [rows] = await pool.query(sql);
 
-    const [rows] = await pool.query(sql);
+  return rows;
+}
 
-    return rows;
+// ==========================================
+// Get Public Products
+// ==========================================
 
+async function getPublicProducts() {
+  const sql = `
+        SELECT
+            p.*,
+            c.category_name,
+            u.first_name,
+            u.last_name
+        FROM products p
+        INNER JOIN categories c
+            ON p.category_id=c.category_id
+        INNER JOIN users u
+            ON p.vendor_id=u.user_id
+        WHERE p.approval_status='Approved'
+        AND p.product_status='Available'
+        ORDER BY p.product_id DESC
+    `;
+
+  const [rows] = await pool.query(sql);
+  return rows;
 }
 
 // ==========================================
@@ -90,8 +107,7 @@ async function getAllProducts(role_id = 0) {
 // ==========================================
 
 async function getProductById(id) {
-
-    const sql = `
+  const sql = `
         SELECT
             p.*,
             c.category_name,
@@ -105,10 +121,9 @@ async function getProductById(id) {
         WHERE p.product_id = ?
     `;
 
-    const [rows] = await pool.query(sql, [id]);
+  const [rows] = await pool.query(sql, [id]);
 
-    return rows[0];
-
+  return rows[0];
 }
 
 // ==========================================
@@ -116,14 +131,12 @@ async function getProductById(id) {
 // ==========================================
 
 async function updateProduct(id, product) {
+  let sql;
+  let values;
 
-    let sql;
-    let values;
-
-    // Update WITH image
-    if (product.image) {
-
-        sql = `
+  // Update WITH image
+  if (product.image) {
+    sql = `
             UPDATE products
             SET
                 category_id=?,
@@ -137,26 +150,22 @@ async function updateProduct(id, product) {
             WHERE product_id=?
         `;
 
-        values = [
+    values = [
+      product.category_id,
+      product.product_name,
+      product.description || "",
+      product.sku || "",
+      product.price,
+      product.quantity,
+      product.image,
+      product.product_status,
+      id,
+    ];
+  }
 
-            product.category_id,
-            product.product_name,
-            product.description || "",
-            product.sku || "",
-            product.price,
-            product.quantity,
-            product.image,
-            product.product_status,
-            id
-
-        ];
-
-    }
-
-    // Update WITHOUT image
-    else {
-
-        sql = `
+  // Update WITHOUT image
+  else {
+    sql = `
             UPDATE products
             SET
                 category_id=?,
@@ -169,25 +178,21 @@ async function updateProduct(id, product) {
             WHERE product_id=?
         `;
 
-        values = [
+    values = [
+      product.category_id,
+      product.product_name,
+      product.description || "",
+      product.sku || "",
+      product.price,
+      product.quantity,
+      product.product_status,
+      id,
+    ];
+  }
 
-            product.category_id,
-            product.product_name,
-            product.description || "",
-            product.sku || "",
-            product.price,
-            product.quantity,
-            product.product_status,
-            id
+  const [result] = await pool.query(sql, values);
 
-        ];
-
-    }
-
-    const [result] = await pool.query(sql, values);
-
-    return result;
-
+  return result;
 }
 
 // ==========================================
@@ -195,21 +200,17 @@ async function updateProduct(id, product) {
 // ==========================================
 
 async function approveProduct(id) {
-
-    const [result] = await pool.query(
-
-        `
+  const [result] = await pool.query(
+    `
         UPDATE products
         SET approval_status='Approved'
         WHERE product_id=?
         `,
 
-        [id]
+    [id],
+  );
 
-    );
-
-    return result;
-
+  return result;
 }
 
 // ==========================================
@@ -217,21 +218,17 @@ async function approveProduct(id) {
 // ==========================================
 
 async function rejectProduct(id) {
-
-    const [result] = await pool.query(
-
-        `
+  const [result] = await pool.query(
+    `
         UPDATE products
         SET approval_status='Rejected'
         WHERE product_id=?
         `,
 
-        [id]
+    [id],
+  );
 
-    );
-
-    return result;
-
+  return result;
 }
 
 // ==========================================
@@ -239,30 +236,24 @@ async function rejectProduct(id) {
 // ==========================================
 
 async function deleteProduct(id) {
-
-    const [result] = await pool.query(
-
-        `
+  const [result] = await pool.query(
+    `
         DELETE FROM products
         WHERE product_id=?
         `,
 
-        [id]
+    [id],
+  );
 
-    );
-
-    return result;
-
+  return result;
 }
 
 module.exports = {
-
-    createProduct,
-    getAllProducts,
-    getProductById,
-    updateProduct,
-    approveProduct,
-    rejectProduct,
-    deleteProduct
-
+  createProduct,
+  getAllProducts,
+  getProductById,
+  updateProduct,
+  approveProduct,
+  rejectProduct,
+  deleteProduct,
 };
