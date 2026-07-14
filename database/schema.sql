@@ -27,6 +27,10 @@ CREATE TABLE users (
 
     email_verified BOOLEAN DEFAULT FALSE,
 
+    reset_token VARCHAR(255) NULL,
+
+    reset_token_expires_at DATETIME NULL,
+
     last_login DATETIME,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
