@@ -3,72 +3,49 @@
 // ======================================
 
 function validateRegister(data) {
+  const errors = [];
 
-    const errors = [];
+  // Role
+  if (!data.role) {
+    errors.push("Role is required.");
+  } else if (!["Vendor", "Customer"].includes(data.role)) {
+    errors.push("Role must be Vendor or Customer.");
+  }
 
-    // Role
-    if (!data.role) {
+  // First Name
+  if (!data.first_name || data.first_name.trim() === "") {
+    errors.push("First name is required.");
+  }
 
-        errors.push("Role is required.");
+  // Last Name
+  if (!data.last_name || data.last_name.trim() === "") {
+    errors.push("Last name is required.");
+  }
 
-    } else if (!["Vendor", "Customer"].includes(data.role)) {
+  // Email
+  if (!data.email || data.email.trim() === "") {
+    errors.push("Email is required.");
+  } else {
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
-        errors.push("Role must be Vendor or Customer.");
-
+    if (!emailRegex.test(data.email)) {
+      errors.push("Invalid email address.");
     }
+  }
 
-    // First Name
-    if (!data.first_name || data.first_name.trim() === "") {
+  // Phone
+  if (!data.phone || data.phone.trim() === "") {
+    errors.push("Phone number is required.");
+  }
 
-        errors.push("First name is required.");
+  // Password
+  if (!data.password) {
+    errors.push("Password is required.");
+  } else if (data.password.length < 6) {
+    errors.push("Password must be at least 6 characters.");
+  }
 
-    }
-
-    // Last Name
-    if (!data.last_name || data.last_name.trim() === "") {
-
-        errors.push("Last name is required.");
-
-    }
-
-    // Email
-    if (!data.email || data.email.trim() === "") {
-
-        errors.push("Email is required.");
-
-    } else {
-
-        const emailRegex =
-            /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-
-        if (!emailRegex.test(data.email)) {
-
-            errors.push("Invalid email address.");
-
-        }
-
-    }
-
-    // Phone
-    if (!data.phone || data.phone.trim() === "") {
-
-        errors.push("Phone number is required.");
-
-    }
-
-    // Password
-    if (!data.password) {
-
-        errors.push("Password is required.");
-
-    } else if (data.password.length < 6) {
-
-        errors.push("Password must be at least 6 characters.");
-
-    }
-
-    return errors;
-
+  return errors;
 }
 
 // ======================================
@@ -76,28 +53,62 @@ function validateRegister(data) {
 // ======================================
 
 function validateLogin(data) {
+  const errors = [];
 
-    const errors = [];
+  if (!data.email || data.email.trim() === "") {
+    errors.push("Email is required.");
+  }
 
-    if (!data.email || data.email.trim() === "") {
+  if (!data.password || data.password.trim() === "") {
+    errors.push("Password is required.");
+  }
 
-        errors.push("Email is required.");
+  return errors;
+}
 
+// ======================================
+// Forgot Password Validation
+// ======================================
+
+function validateForgotPassword(data) {
+  const errors = [];
+
+  if (!data.email || data.email.trim() === "") {
+    errors.push("Email is required.");
+  } else {
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+    if (!emailRegex.test(data.email)) {
+      errors.push("Invalid email address.");
     }
+  }
 
-    if (!data.password || data.password.trim() === "") {
+  return errors;
+}
 
-        errors.push("Password is required.");
+// ======================================
+// Reset Password Validation
+// ======================================
 
-    }
+function validateResetPassword(data) {
+  const errors = [];
 
-    return errors;
+  if (!data.token || data.token.trim() === "") {
+    errors.push("Reset token is required.");
+  }
 
+  if (!data.password) {
+    errors.push("Password is required.");
+  } else if (data.password.length < 6) {
+    errors.push("Password must be at least 6 characters.");
+  }
+
+  return errors;
 }
 
 module.exports = {
-
-    validateRegister,
-    validateLogin
-
+  validateRegister,
+  validateLogin,
+  validateForgotPassword,
+  validateResetPassword,
 };

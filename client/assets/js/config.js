@@ -12,6 +12,8 @@ const CONFIG = {
         REGISTER: "/auth/register",
         LOGIN: "/auth/login",
         ME: "/auth/me",
+        FORGOT_PASSWORD: "/auth/forgot-password",
+        RESET_PASSWORD: "/auth/reset-password",
       },
       // Product endpoints
       PRODUCTS: {
