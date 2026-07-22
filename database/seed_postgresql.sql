@@ -1,25 +1,4 @@
--- =====================================================
--- PRODUCT MANAGEMENT SYSTEM - POSTGRESQL SEED DATA
--- =====================================================
--- Converted from database/seed.sql (MySQL) to PostgreSQL.
---
--- Conversion notes:
---   USE <db>;                    -> removed (connect to the DB via psql -d instead)
---   SET FOREIGN_KEY_CHECKS       -> removed; PostgreSQL TRUNCATE ... CASCADE
---                                    handles FK dependencies directly
---   TRUNCATE TABLE x; (repeated) -> single TRUNCATE ... RESTART IDENTITY CASCADE
---   ALTER TABLE x AUTO_INCREMENT -> SELECT setval(...) at the end
---   backticks                    -> removed
---
--- NOTE: The original MySQL seed.sql also referenced tables such as
--- activity_logs, reviews, order_items, orders, cart_items, carts,
--- product_approvals, product_inventory and product_images. None of
--- these tables are created by schema_postgresql.sql because nothing
--- in the current codebase (server/models/*.js) ever queries them -
--- they were leftovers from an earlier/aspirational version of the
--- schema. They have been intentionally omitted here to avoid
--- inventing unused functionality. See MIGRATION_REPORT.md.
--- =====================================================
+
 
 TRUNCATE TABLE notifications, products, categories, users, roles
 RESTART IDENTITY CASCADE;

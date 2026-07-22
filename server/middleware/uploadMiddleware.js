@@ -1,89 +1,44 @@
 const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
 
-// ======================================
-// Storage
-// ======================================
+const uploadDir = path.join(__dirname, "../uploads");
 
-// Extension is derived from the validated MIME type below, not from
-// the user-supplied original filename - see the security note on
-// fileFilter for why.
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const MIME_TO_EXTENSION = {
-
-    "image/jpeg": ".jpg",
-    "image/jpg": ".jpg",
-    "image/png": ".png",
-    "image/webp": ".webp"
-
+  "image/jpeg": ".jpg",
+  "image/jpg": ".jpg",
+  "image/png": ".png",
+  "image/webp": ".webp",
 };
 
 const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, uploadDir);
+  },
 
-    destination(req, file, cb) {
+  filename(req, file, cb) {
+    const filename = Date.now() + "-" + Math.round(Math.random() * 1e9);
 
-        cb(null, "server/uploads");
-
-    },
-
-    filename(req, file, cb) {
-
-        const uniqueName =
-            Date.now() +
-            "-" +
-            Math.round(Math.random() * 1E9);
-
-        const extension = MIME_TO_EXTENSION[file.mimetype] || "";
-
-        cb(
-
-            null,
-
-            uniqueName + extension
-
-        );
-
-    }
-
+    cb(null, filename + MIME_TO_EXTENSION[file.mimetype]);
+  },
 });
 
-// ======================================
-// File Filter
-// ======================================
-
 function fileFilter(req, file, cb) {
-
-    // NOTE: file.mimetype is the Content-Type header the client sent
-    // for this part of the multipart upload - it is client-supplied
-    // and can be spoofed, so this check alone does not guarantee the
-    // file's actual bytes are a real image. It is still useful as a
-    // first line of defense combined with deriving the saved file's
-    // extension from this same validated value (see MIME_TO_EXTENSION
-    // above) rather than trusting the original filename's extension.
-    const allowed = Object.keys(MIME_TO_EXTENSION);
-
-    if (allowed.includes(file.mimetype)) {
-
-        cb(null, true);
-
-    }
-
-    else {
-
-        cb(new Error("Only image files are allowed."), false);
-
-    }
-
+  if (Object.keys(MIME_TO_EXTENSION).includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only JPG, PNG and WEBP images are allowed."));
+  }
 }
 
 module.exports = multer({
-
-    storage,
-
-    fileFilter,
-
-    limits: {
-
-        fileSize: 2 * 1024 * 1024
-
-    }
-
+  storage,
+  fileFilter,
+  limits: {
+    fileSize: 2 * 1024 * 1024,
+  },
 });

@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const morgan = require("morgan");
+const fs = require("fs");
 
 require("dotenv").config();
 
@@ -64,6 +65,12 @@ app.use("/pages", express.static(path.join(__dirname, "../client/pages")));
 
 // Images
 app.use("/images", express.static(path.join(__dirname, "../client/images")));
+
+const uploadsPath = path.join(__dirname, "uploads");
+
+if (!fs.existsSync(uploadsPath)) {
+  fs.mkdirSync(uploadsPath, { recursive: true });
+}
 
 // Uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
