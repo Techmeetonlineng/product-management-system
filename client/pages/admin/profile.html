@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile | Oncampus Marketplace</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../assets/css/admin.css" />
+  </head>
+  <body data-layout="admin" data-page="profile">
+    <div class="wrapper">
+      <aside class="sidebar"></aside>
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+      <main class="main-content">
+        <nav class="topbar">
+          <div class="topbar-left">
+            <button
+              class="sidebar-toggle"
+              id="sidebarToggle"
+              aria-label="Toggle menu"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="topbar-title">
+              <h2>Profile</h2>
+              <p>Manage your administrator account</p>
+            </div>
+          </div>
+        </nav>
+
+        <div class="page-content">
+          <div class="row g-4">
+            <div class="col-lg-8">
+              <div class="card">
+                <div class="card-header">My Information</div>
+                <div class="card-body">
+                  <form id="profileForm">
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label class="form-label">First Name</label>
+                        <input
+                          type="text"
+                          id="first_name"
+                          class="form-control"
+                        />
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Last Name</label>
+                        <input
+                          type="text"
+                          id="last_name"
+                          class="form-control"
+                        />
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input
+                          type="email"
+                          id="email"
+                          class="form-control"
+                          readonly
+                        />
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">Phone Number</label>
+                        <input type="text" id="phone" class="form-control" />
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      class="btn btn-primary mt-4"
+                      id="saveProfile"
+                    >
+                      <i class="fas fa-save"></i> Save Changes
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <div class="card mt-4">
+                <div class="card-header">Security</div>
+                <div class="card-body">
+                  <p class="text-muted mb-3">
+                    Change your password regularly to keep your account secure.
+                  </p>
+                  <button class="btn btn-secondary" id="changePasswordBtn">
+                    <i class="fas fa-key"></i> Change Password
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="card">
+                <div class="card-header">Account Overview</div>
+                <div class="card-body text-center">
+                  <div
+                    class="sidebar-user-avatar mx-auto mb-3"
+                    id="profileAvatar"
+                    style="width: 64px; height: 64px; font-size: 1.5rem"
+                  >
+                    ?
+                  </div>
+                  <h5 class="mb-1" id="profileFullName">Administrator</h5>
+                  <p class="text-muted small mb-3" id="profileEmailDisplay"></p>
+                  <span class="badge bg-primary">Administrator</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../../assets/js/config.js"></script>
+    <script src="../../assets/js/api-service.js"></script>
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/layout.js"></script>
+    <script src="../../assets/js/app.js"></script>
+    <script src="../../assets/js/admin/profile.js"></script>
+  </body>
+</html>

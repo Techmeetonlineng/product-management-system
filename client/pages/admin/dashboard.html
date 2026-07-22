@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | Oncampus Marketplace</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../assets/css/admin.css" />
+  </head>
+  <body data-layout="admin" data-page="dashboard">
+    <div class="wrapper">
+      <aside class="sidebar"></aside>
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+      <main class="main-content">
+        <nav class="topbar">
+          <div class="topbar-left">
+            <button
+              class="sidebar-toggle"
+              id="sidebarToggle"
+              aria-label="Toggle menu"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="topbar-title">
+              <h2>Dashboard</h2>
+              <p>Overview of your marketplace</p>
+            </div>
+          </div>
+        </nav>
+
+        <div class="page-content">
+          <div class="row g-4">
+            <div class="col-sm-6 col-xl-3">
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-box"></i></div>
+                <h6>Total Products</h6>
+                <h2 id="totalProducts">0</h2>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-layer-group"></i></div>
+                <h6>Categories</h6>
+                <h2 id="totalCategories">0</h2>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-store"></i></div>
+                <h6>Vendors</h6>
+                <h2 id="totalVendors">0</h2>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <h6>Pending Vendors</h6>
+                <h2 id="pendingVendors">0</h2>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mt-4">
+            <div class="card-header">Recent Products</div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Category</th>
+                      <th>Price</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recentProducts"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../../assets/js/config.js"></script>
+    <script src="../../assets/js/api-service.js"></script>
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/layout.js"></script>
+    <script src="../../assets/js/app.js"></script>
+    <script src="../../assets/js/admin/dashboard.js"></script>
+  </body>
+</html>

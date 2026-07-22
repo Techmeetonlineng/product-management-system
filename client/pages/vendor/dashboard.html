@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vendor Dashboard | Oncampus Marketplace</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../assets/css/admin.css" />
+  </head>
+  <body data-layout="vendor" data-page="dashboard">
+    <div class="wrapper">
+      <aside class="sidebar"></aside>
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+      <main class="main-content">
+        <nav class="topbar">
+          <div class="topbar-left">
+            <button
+              class="sidebar-toggle"
+              id="sidebarToggle"
+              aria-label="Toggle menu"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="topbar-title">
+              <h2>Welcome, <span id="vendorName">Vendor</span></h2>
+              <p>Manage your products and inventory</p>
+            </div>
+          </div>
+        </nav>
+
+        <div class="page-content">
+          <div class="row g-4">
+            <div class="col-sm-6 col-xl-4">
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-box"></i></div>
+                <h6>Total Products</h6>
+                <h2 id="totalProducts">0</h2>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-4">
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <h6>Pending Approval</h6>
+                <h2 id="pendingProducts">0</h2>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-4">
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-circle-check"></i></div>
+                <h6>Approved Products</h6>
+                <h2 id="approvedProducts">0</h2>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-4 mt-2">
+            <div class="col-md-4">
+              <div class="action-card">
+                <i class="fas fa-box"></i>
+                <h5>Manage Products</h5>
+                <p>Create, edit and manage your product listings.</p>
+                <a href="products.html" class="btn btn-primary"
+                  >Go to Products</a
+                >
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="action-card">
+                <i class="fas fa-boxes-stacked"></i>
+                <h5>Inventory</h5>
+                <p>Track stock levels and product availability.</p>
+                <a href="inventory.html" class="btn btn-primary"
+                  >View Inventory</a
+                >
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="action-card">
+                <i class="fas fa-user"></i>
+                <h5>Profile</h5>
+                <p>Update your account information and settings.</p>
+                <a href="profile.html" class="btn btn-primary">Edit Profile</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../../assets/js/config.js"></script>
+    <script src="../../assets/js/api-service.js"></script>
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/layout.js"></script>
+    <script src="../../assets/js/app.js"></script>
+    <script src="../../assets/js/vendor/dashboard.js"></script>
+  </body>
+</html>

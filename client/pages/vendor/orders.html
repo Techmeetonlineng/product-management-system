@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orders | Oncampus Marketplace</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../assets/css/admin.css" />
+  </head>
+  <body data-layout="vendor" data-page="orders">
+    <div class="wrapper">
+      <aside class="sidebar"></aside>
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+      <main class="main-content">
+        <nav class="topbar">
+          <div class="topbar-left">
+            <button
+              class="sidebar-toggle"
+              id="sidebarToggle"
+              aria-label="Toggle menu"
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="topbar-title">
+              <h2>Orders</h2>
+              <p>Orders placed for your products</p>
+            </div>
+          </div>
+        </nav>
+
+        <div class="page-content">
+          <div class="row g-4 mb-2">
+            <div class="col-sm-6 col-xl-4">
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-receipt"></i></div>
+                <h6>Total Orders</h6>
+                <h2>0</h2>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-4">
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <h6>Pending Fulfillment</h6>
+                <h2>0</h2>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-4">
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-sack-dollar"></i></div>
+                <h6>Total Sales</h6>
+                <h2>₦0</h2>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mt-4">
+            <div class="card-header">My Orders</div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead>
+                    <tr>
+                      <th>Order Ref</th>
+                      <th>Product</th>
+                      <th>Quantity</th>
+                      <th>Total</th>
+                      <th>Status</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody id="orderTable"></tbody>
+                </table>
+              </div>
+              <div class="empty-state">
+                <i class="fas fa-receipt"></i>
+                <h5>Order tracking is coming soon</h5>
+                <p>
+                  Customers can browse and check out today, but orders aren't
+                  saved to the database yet since there's no
+                  <code>orders</code> table or API behind it. Once that's added,
+                  orders for your products will show up here automatically.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../../assets/js/config.js"></script>
+    <script src="../../assets/js/api-service.js"></script>
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/layout.js"></script>
+    <script src="../../assets/js/app.js"></script>
+    <script>
+      requireRole(CONFIG.ROLES.VENDOR);
+    </script>
+  </body>
+</html>
