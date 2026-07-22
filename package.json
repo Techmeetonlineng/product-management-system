@@ -6,6 +6,21 @@
   "type": "commonjs",
   "author": "Busari Nurudeen Akolade",
   "license": "ISC",
+  "keywords": [
+    "nodejs",
+    "express",
+    "postgresql",
+    "marketplace",
+    "product-management",
+    "inventory"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Techmeetonlineng/product-management-system.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
