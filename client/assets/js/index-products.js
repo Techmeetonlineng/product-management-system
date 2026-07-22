@@ -198,7 +198,7 @@ function createProductCard(product) {
 
   const price = parseFloat(product.price).toLocaleString("en-US", {
     style: "currency",
-    currency: "USD",
+    currency: "NGN",
   });
 
   const description = product.description || "";
