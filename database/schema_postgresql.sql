@@ -1,25 +1,4 @@
--- =====================================================
--- PRODUCT MANAGEMENT SYSTEM - POSTGRESQL SCHEMA
--- =====================================================
--- Converted from MySQL (database/schema.sql) to PostgreSQL.
---
--- Conversion notes:
---   AUTO_INCREMENT          -> GENERATED ALWAYS AS IDENTITY
---   ENUM(...)                -> native PostgreSQL ENUM TYPE
---   DATETIME                 -> TIMESTAMP
---   ON UPDATE CURRENT_TIMESTAMP -> trigger (set_updated_at)
---   backticks                -> removed (not needed in Postgres)
---   ENGINE=InnoDB / CHARSET / COLLATE -> removed (MySQL-only)
---
--- Tables included are exactly the tables referenced anywhere in
--- server/models/*.js: roles, users, categories, products,
--- notifications. Creation order respects foreign key dependencies:
---   roles -> users -> categories -> products -> notifications
--- =====================================================
 
--- =====================================================
--- ENUM TYPES
--- =====================================================
 
 DO $$
 BEGIN
@@ -48,10 +27,7 @@ BEGIN
     END IF;
 END $$;
 
--- =====================================================
--- SHARED TRIGGER FUNCTION
--- Emulates MySQL's "ON UPDATE CURRENT_TIMESTAMP"
--- =====================================================
+
 
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER AS $$
@@ -75,9 +51,6 @@ CREATE TABLE IF NOT EXISTS roles (
 
 );
 
--- =====================================================
--- USERS
--- =====================================================
 
 CREATE TABLE IF NOT EXISTS users (
 
@@ -122,9 +95,7 @@ BEFORE UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION set_updated_at();
 
--- =====================================================
--- CATEGORIES
--- =====================================================
+
 
 CREATE TABLE IF NOT EXISTS categories (
 
@@ -140,9 +111,6 @@ CREATE TABLE IF NOT EXISTS categories (
 
 );
 
--- =====================================================
--- PRODUCTS
--- =====================================================
 
 CREATE TABLE IF NOT EXISTS products (
 
@@ -196,9 +164,6 @@ BEFORE UPDATE ON products
 FOR EACH ROW
 EXECUTE FUNCTION set_updated_at();
 
--- =====================================================
--- NOTIFICATIONS
--- =====================================================
 
 CREATE TABLE IF NOT EXISTS notifications (
 
@@ -221,9 +186,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 
 );
 
--- =====================================================
--- INDEXES
--- =====================================================
+
 
 CREATE INDEX IF NOT EXISTS idx_users_role_id ON users (role_id);
 CREATE INDEX IF NOT EXISTS idx_users_account_status ON users (account_status);
@@ -233,28 +196,12 @@ CREATE INDEX IF NOT EXISTS idx_products_approval_status ON products (approval_st
 CREATE INDEX IF NOT EXISTS idx_products_product_status ON products (product_status);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications (user_id);
 
--- Matches productModel.getAllProducts()'s customer-facing filter
--- (WHERE approval_status='Approved' AND product_status='Available')
--- and productModel.getPublicProducts(), which use the exact same pair.
+
 CREATE INDEX IF NOT EXISTS idx_products_approval_product_status
     ON products (approval_status, product_status);
 
--- Partial index: reset_token is NULL for the vast majority of rows, so
--- only indexing the rows that actually have a token keeps the index
--- small while still speeding up authModel.findUserByResetToken().
+
 CREATE INDEX IF NOT EXISTS idx_users_reset_token
     ON users (reset_token)
     WHERE reset_token IS NOT NULL;
 
--- =====================================================
--- RETROFITTING AN EXISTING DATABASE
--- =====================================================
--- If this schema was already applied to a database before the CHECK
--- constraints and extra indexes above were added, run this separately
--- (CREATE TABLE IF NOT EXISTS above is a no-op on an existing table,
--- so the new constraints/indexes need to be added explicitly):
---
---   ALTER TABLE products ADD CONSTRAINT chk_products_price_non_negative CHECK (price >= 0);
---   ALTER TABLE products ADD CONSTRAINT chk_products_quantity_non_negative CHECK (quantity >= 0);
---   CREATE INDEX IF NOT EXISTS idx_products_approval_product_status ON products (approval_status, product_status);
---   CREATE INDEX IF NOT EXISTS idx_users_reset_token ON users (reset_token) WHERE reset_token IS NOT NULL;

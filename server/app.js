@@ -41,9 +41,11 @@ app.use(cors());
 
 app.use(express.json());
 
-app.use(express.urlencoded({
-    extended: true
-}));
+app.use(
+  express.urlencoded({
+    extended: true,
+  }),
+);
 
 app.use(morgan("dev"));
 
@@ -55,28 +57,16 @@ app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "../client")));
 
 // Assets
-app.use(
-    "/assets",
-    express.static(path.join(__dirname, "../client/assets"))
-);
+app.use("/assets", express.static(path.join(__dirname, "../client/assets")));
 
 // Pages
-app.use(
-    "/pages",
-    express.static(path.join(__dirname, "../client/pages"))
-);
+app.use("/pages", express.static(path.join(__dirname, "../client/pages")));
 
 // Images
-app.use(
-    "/images",
-    express.static(path.join(__dirname, "../client/images"))
-);
+app.use("/images", express.static(path.join(__dirname, "../client/images")));
 
 // Uploads
-app.use(
-    "/uploads",
-    express.static(path.join(__dirname, "uploads"))
-);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ======================================
 // API Routes
@@ -104,16 +94,16 @@ console.log("✓ Customer Routes Loaded");
 
 // Login Page
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "../client/login.html"));
+  res.sendFile(path.join(__dirname, "../client/login.html"));
 });
 
 // Dashboard Redirect
 app.get("/admin/dashboard.html", (req, res) => {
-    res.redirect("/pages/admin/dashboard.html");
+  res.redirect("/pages/admin/dashboard.html");
 });
 
 app.get("/vendor/dashboard.html", (req, res) => {
-    res.redirect("/pages/vendor/dashboard.html");
+  res.redirect("/pages/vendor/dashboard.html");
 });
 
 // ======================================
@@ -121,28 +111,20 @@ app.get("/vendor/dashboard.html", (req, res) => {
 // ======================================
 
 app.get("/health", async (req, res) => {
+  try {
+    await pool.query("SELECT 1");
 
-    try {
-
-        await pool.query("SELECT 1");
-
-        res.json({
-            success: true,
-            message: "Server is running.",
-            database: "Connected"
-        });
-
-    }
-
-    catch (error) {
-
-        res.status(500).json({
-            success: false,
-            message: "Database connection failed."
-        });
-
-    }
-
+    res.json({
+      success: true,
+      message: "Server is running.",
+      database: "Connected",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Database connection failed.",
+    });
+  }
 });
 
 // ======================================
@@ -150,14 +132,10 @@ app.get("/health", async (req, res) => {
 // ======================================
 
 app.use((req, res) => {
-
-    res.status(404).json({
-
-        success: false,
-        message: "Route not found."
-
-    });
-
+  res.status(404).json({
+    success: false,
+    message: "Route not found.",
+  });
 });
 
 // ======================================
@@ -165,16 +143,12 @@ app.use((req, res) => {
 // ======================================
 
 app.use((err, req, res, next) => {
+  console.error(err);
 
-    console.error(err);
-
-    res.status(500).json({
-
-        success: false,
-        message: err.message
-
-    });
-
+  res.status(500).json({
+    success: false,
+    message: err.message,
+  });
 });
 
 // ======================================
@@ -182,42 +156,30 @@ app.use((err, req, res, next) => {
 // ======================================
 
 (async () => {
+  try {
+    const result = await pool.query("SELECT current_database() AS db");
 
-    try {
+    console.log("=================================");
+    console.log("✅ Connected to PostgreSQL Database");
+    console.log("=================================");
 
-        const result = await pool.query(
-            "SELECT current_database() AS db"
-        );
-
-        console.log("=================================");
-        console.log("✅ Connected to PostgreSQL Database");
-        console.log("=================================");
-
-        console.log(result.rows);
-
-    }
-
-    catch (error) {
-
-        console.log("=================================");
-        console.log("❌ Database Connection Failed");
-        console.log(error.message);
-        console.log("=================================");
-
-    }
-
+    console.log(result.rows);
+  } catch (error) {
+    console.log("=================================");
+    console.log("❌ Database Connection Failed");
+    console.log(error.message);
+    console.log("=================================");
+  }
 })();
 
 // ======================================
 // Start Server
 // ======================================
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5432;
 
 app.listen(PORT, () => {
-
-    console.log("=================================");
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log("=================================");
-
+  console.log("=================================");
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log("=================================");
 });
