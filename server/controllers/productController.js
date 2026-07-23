@@ -88,12 +88,14 @@ async function getAllProducts(req, res) {
       data: products,
     });
   } catch (error) {
+    console.error("========== PRODUCT ERROR ==========");
     console.error(error);
+    console.error(error.stack);
+    console.error("===================================");
 
     return res.status(500).json({
       success: false,
-
-      message: "Unable to retrieve products.",
+      message: error.message,
     });
   }
 }
@@ -161,11 +163,14 @@ async function updateProduct(req, res) {
       message: "Product updated successfully.",
     });
   } catch (error) {
+    console.error("=================================");
+    console.error("CREATE PRODUCT ERROR");
     console.error(error);
+    console.error("=================================");
 
     return res.status(500).json({
       success: false,
-      message: "Unable to update product.",
+      message: error.message,
     });
   }
 }
