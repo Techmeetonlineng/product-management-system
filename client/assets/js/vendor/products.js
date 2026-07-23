@@ -71,7 +71,11 @@ function renderProducts(data) {
             <td>${product.product_id}</td>
             <td>
                 <img src="${
-                  product.image ? product.image : "/assets/images/no-image.png"
+                  product.image
+                    ? product.image.startsWith("http")
+                      ? product.image
+                      : `/uploads/${product.image}`
+                    : "/assets/images/no-image.png"
                 }" width="60" height="60" style="object-fit:cover;border-radius:6px;">
             </td>
             <td>${product.product_name}</td>
