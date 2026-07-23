@@ -61,6 +61,6 @@ router.put("/:id/approve", authorize(1), productController.approveProduct);
 router.put("/:id/reject", authorize(1), productController.rejectProduct);
 
 // Delete Product
-router.delete("/:id", authorize(1), productController.deleteProduct);
+router.delete("/:id", authenticate, productController.deleteProduct);
 
 module.exports = router;

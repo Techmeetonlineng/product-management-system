@@ -273,18 +273,38 @@ async function rejectProduct(req, res) {
 
 async function deleteProduct(req, res) {
   try {
-    const result = await productModel.deleteProduct(req.params.id);
+    const product = await productModel.getProductById(req.params.id);
 
-    if (result === 0) {
+    if (!product) {
       return res.status(404).json({
         success: false,
         message: "Product not found.",
       });
     }
 
-    return res.status(200).json({
-      success: true,
-      message: "Product deleted successfully.",
+    // Admin can delete anything
+    if (req.user.role_id === 1) {
+      await productModel.deleteProduct(req.params.id);
+
+      return res.json({
+        success: true,
+        message: "Product deleted successfully.",
+      });
+    }
+
+    // Vendor can delete only their own product
+    if (req.user.role_id === 2 && product.vendor_id === req.user.user_id) {
+      await productModel.deleteProduct(req.params.id);
+
+      return res.json({
+        success: true,
+        message: "Product deleted successfully.",
+      });
+    }
+
+    return res.status(403).json({
+      success: false,
+      message: "You are not allowed to delete this product.",
     });
   } catch (error) {
     console.error(error);
