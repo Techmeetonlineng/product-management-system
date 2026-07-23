@@ -35,11 +35,15 @@ async function createProduct(req, res) {
       product_id: result.product_id,
     });
   } catch (error) {
+    console.error("==================================");
+    console.error("CREATE PRODUCT ERROR");
     console.error(error);
+    console.error(error.stack);
+    console.error("==================================");
 
     return res.status(500).json({
       success: false,
-      message: "Unable to create product.",
+      message: error.message,
     });
   }
 }
@@ -163,8 +167,6 @@ async function updateProduct(req, res) {
       message: "Product updated successfully.",
     });
   } catch (error) {
-    console.error("=================================");
-    console.error("CREATE PRODUCT ERROR");
     console.error(error);
     console.error("=================================");
 
