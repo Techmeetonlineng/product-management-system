@@ -14,7 +14,7 @@ async function createProduct(req, res) {
 
     // Save uploaded image filename
     if (req.file) {
-      req.body.image = req.file.filename;
+      req.body.image = req.file.path;
     }
 
     const { isValid, errors } = validateProduct(req.body);
@@ -134,7 +134,7 @@ async function updateProduct(req, res) {
   try {
     // If a new image is uploaded
     if (req.file) {
-      req.body.image = req.file.filename;
+      req.body.image = req.file.path;
     }
 
     const { isValid, errors } = validateProduct(req.body);
