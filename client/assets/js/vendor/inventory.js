@@ -135,11 +135,11 @@ function renderInventory(products) {
     return;
   }
 
-  products.forEach((product) => {
-    const image = product.image
-      ? `${CONFIG.API.BASE_URL.replace("/api", "")}/uploads/${product.image}`
-      : "../../assets/images/no-image.png";
-
+  const image = !product.image
+    ? "../../assets/images/no-image.png"
+    : product.image.startsWith("http")
+        ? product.image
+        : `${CONFIG.API.BASE_URL.replace("/api","")}/uploads/${product.image}`;
     table.innerHTML += `
 
         <tr>
