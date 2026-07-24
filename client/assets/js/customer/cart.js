@@ -7,7 +7,8 @@ requireRole(CONFIG.ROLES.CUSTOMER);
 document.addEventListener("DOMContentLoaded", () => {
   const user = getCurrentUser();
   if (user) {
-    const name = `${user.first_name || ""} ${user.last_name || ""}`.trim() || "Customer";
+    const name =
+      `${user.first_name || ""} ${user.last_name || ""}`.trim() || "Customer";
     document.getElementById("customerName").textContent = name;
   }
 
@@ -49,7 +50,7 @@ function renderCart() {
         <tr>
             <td>
                 <div class="d-flex align-items-center gap-2">
-                    <img src="${imageUrl}" alt="${item.product_name}" onerror="this.src='../../assets/images/logo.png'">
+                    <img src="${imageUrl}" alt="${item.product_name} onerror="this.onerror=null;this.src='/assets/images/no-image.png';'">
                     <div>
                         <div class="fw-semibold">${item.product_name}</div>
                         <small class="text-muted">${item.vendor_name || ""}</small>
@@ -87,7 +88,8 @@ function renderCart() {
 
 function updateSummary() {
   document.getElementById("summaryCount").textContent = getCartCount();
-  document.getElementById("summaryTotal").textContent = formatCurrency(getCartTotal());
+  document.getElementById("summaryTotal").textContent =
+    formatCurrency(getCartTotal());
 }
 
 // ======================================
@@ -100,9 +102,11 @@ function changeQuantity(productId, newQuantity) {
 }
 
 function removeItem(productId) {
-  showConfirm("Remove Item", "Remove this product from your cart?").then((result) => {
-    if (!result.isConfirmed) return;
-    removeFromCart(productId);
-    renderCart();
-  });
+  showConfirm("Remove Item", "Remove this product from your cart?").then(
+    (result) => {
+      if (!result.isConfirmed) return;
+      removeFromCart(productId);
+      renderCart();
+    },
+  );
 }

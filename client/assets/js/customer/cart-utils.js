@@ -49,14 +49,18 @@ function addToCart(product, quantity = 1) {
   const maxQuantity = Number(product.quantity) || 0;
 
   if (existing) {
-    existing.quantity = Math.min(existing.quantity + quantity, maxQuantity || existing.quantity + quantity);
+    existing.quantity = Math.min(
+      existing.quantity + quantity,
+      maxQuantity || existing.quantity + quantity,
+    );
   } else {
     cart.push({
       product_id: product.product_id,
       product_name: product.product_name,
       price: Number(product.price) || 0,
       image: product.image || null,
-      vendor_name: `${product.first_name || ""} ${product.last_name || ""}`.trim(),
+      vendor_name:
+        `${product.first_name || ""} ${product.last_name || ""}`.trim(),
       quantity: Math.max(1, Math.min(quantity, maxQuantity || quantity)),
       max_quantity: maxQuantity,
     });
@@ -121,9 +125,18 @@ function getCartTotal() {
  * Resolve a product's image URL the same way the landing page does.
  */
 function getProductImageUrl(product) {
-  return product.image
-    ? `${CONFIG.API.BASE_URL.replace("/api", "")}/uploads/${product.image}`
-    : "../../assets/images/logo.png";
+  // No image
+  if (!product.image) {
+    return "/assets/images/no-image.png";
+  }
+
+  // Cloudinary image
+  if (product.image.startsWith("http")) {
+    return product.image;
+  }
+
+  // Old local upload
+  return `/uploads/${product.image}`;
 }
 
 /**

@@ -10,7 +10,8 @@ let allCategories = [];
 document.addEventListener("DOMContentLoaded", () => {
   const user = getCurrentUser();
   if (user) {
-    const name = `${user.first_name || ""} ${user.last_name || ""}`.trim() || "Customer";
+    const name =
+      `${user.first_name || ""} ${user.last_name || ""}`.trim() || "Customer";
     document.getElementById("customerName").textContent = name;
   }
 
@@ -24,9 +25,15 @@ document.addEventListener("DOMContentLoaded", () => {
 // ======================================
 
 function setupEventListeners() {
-  document.getElementById("productSearch").addEventListener("input", filterProducts);
-  document.getElementById("categoryFilter").addEventListener("change", filterProducts);
-  document.getElementById("sortFilter").addEventListener("change", filterProducts);
+  document
+    .getElementById("productSearch")
+    .addEventListener("input", filterProducts);
+  document
+    .getElementById("categoryFilter")
+    .addEventListener("change", filterProducts);
+  document
+    .getElementById("sortFilter")
+    .addEventListener("change", filterProducts);
 }
 
 // ======================================
@@ -89,7 +96,9 @@ async function loadProducts() {
 // ======================================
 
 function filterProducts() {
-  const searchTerm = document.getElementById("productSearch").value.toLowerCase();
+  const searchTerm = document
+    .getElementById("productSearch")
+    .value.toLowerCase();
   const categoryId = document.getElementById("categoryFilter").value;
   const sortBy = document.getElementById("sortFilter").value;
 
@@ -164,7 +173,7 @@ function createProductCard(product) {
                     src="${imageUrl}"
                     class="card-img-top"
                     alt="${product.product_name}"
-                    onerror="this.src='../../assets/images/logo.png'"
+                    onerror="this.onerror=null;this.src='/assets/images/no-image.png';"
                 />
             </div>
             <div class="card-body d-flex flex-column">
@@ -204,7 +213,10 @@ function handleAddToCart(productId) {
   if (!product) return;
 
   addToCart(product, 1);
-  showSuccess("Added to Cart", `${product.product_name} was added to your cart.`);
+  showSuccess(
+    "Added to Cart",
+    `${product.product_name} was added to your cart.`,
+  );
 }
 
 // ======================================
