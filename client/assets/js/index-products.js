@@ -43,12 +43,11 @@ function createProductCard(product) {
 
       <div class="product-image-wrapper">
         <img
-          src="${imageUrl}"
-          class="card-img-top"
-          alt="${product.product_name}"
-          loading="lazy"
-          onerror="this.onerror=null; this.src='/assets/images/no-image.png';"
-        />
+    src="${imageUrl}"
+    class="card-img-top"
+    alt="${product.product_name}"
+    onerror="this.onerror=null;this.src='/assets/images/no-image.png';"
+/>
 
         <div class="product-overlay">
           <button
